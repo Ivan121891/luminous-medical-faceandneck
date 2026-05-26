@@ -2,13 +2,13 @@
   "use strict";
 
   // ------- Configuration -------
-  const SERVICE_NAME = "Non-Surgical Face and Neck Treatment";
+  const SERVICE_NAME = "ByeBye Melasma Treatment";
   const SERVICE_DURATION_MIN = 60;
 
   // GHL credentials
   const GHL = {
     locationId: 'Q42RHUR6LefBwNRdGXFR',
-    calendarId: 'qTOCGDGqU9aaU1S3CGQv',
+    calendarId: '7dv9cTD9DQIrLqkLlHxt',
     userId:     'xAMtGZMrz3cYyCCLxJiL',
     apiKey:     'pit-ccedc24a-6e84-49d7-b0ad-54c11d8333be',
     apiBase:    'https://services.leadconnectorhq.com',
@@ -285,8 +285,8 @@
         lastName: lastName || '-',
         email,
         phone,
-source: 'Luminous skin tech SA - Non-Surgical Face and Neck Treatment',
-        tags: ['Non-Surgical Face and Neck Treatment'],
+source: 'Luminous skin tech SA - ByeBye Melasma Treatment',
+        tags: ['ByeBye Melasma Treatment'],
       });
       const contactId = contactRes.contact?.id || contactRes.id;
 
@@ -299,7 +299,7 @@ source: 'Luminous skin tech SA - Non-Surgical Face and Neck Treatment',
         assignedUserId: GHL.userId,
         startTime:      isoInTz(start, BUSINESS_TZ),
         endTime:        isoInTz(end,   BUSINESS_TZ),
-        title:          `${name} — Non-Surgical Face and Neck Treatment`,
+        title:          `${name} — ByeBye Melasma Treatment`,
         selectedTimezone: BUSINESS_TZ,
       });
 
