@@ -125,7 +125,7 @@
 
     const cells = [];
     const cursor = new Date(today);
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 6; i++) {
       cells.push(new Date(cursor));
       cursor.setDate(cursor.getDate() + 1);
     }
