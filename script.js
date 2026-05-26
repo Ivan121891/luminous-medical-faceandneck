@@ -2,7 +2,7 @@
   "use strict";
 
   // ------- Configuration -------
-  const SERVICE_NAME = "Jawlines Culpting";
+  const SERVICE_NAME = "Jawline Sculpting Treatment";
   const SERVICE_DURATION_MIN = 60;
 
   // GHL credentials
@@ -285,8 +285,8 @@
         lastName: lastName || '-',
         email,
         phone,
-        source: 'Luminous skin tech SA - Jawlines Culpting',
-        tags: ['Jawlines Culpting'],
+        source: 'Luminous skin tech SA - Jawline Sculpting Treatment',
+        tags: ['Jawline Sculpting Treatment'],
       });
       const contactId = contactRes.contact?.id || contactRes.id;
 
@@ -299,7 +299,7 @@
         assignedUserId: GHL.userId,
         startTime:      isoInTz(start, BUSINESS_TZ),
         endTime:        isoInTz(end,   BUSINESS_TZ),
-        title:          `${name} — Jawlines Culpting`,
+        title:          `${name} — Jawline Sculpting Treatment`,
         selectedTimezone: BUSINESS_TZ,
       });
 
