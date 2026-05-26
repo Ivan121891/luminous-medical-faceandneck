@@ -2,13 +2,13 @@
   "use strict";
 
   // ------- Configuration -------
-  const SERVICE_NAME = "Korean Facial";
+  const SERVICE_NAME = "Jawlines Culpting";
   const SERVICE_DURATION_MIN = 60;
 
   // GHL credentials
   const GHL = {
     locationId: 'Q42RHUR6LefBwNRdGXFR',
-    calendarId: '5IsoybvPvZgq97VD6RN3',
+    calendarId: 'HD8QyUgqKfiLBxTxvqjH',
     userId:     'xAMtGZMrz3cYyCCLxJiL',
     apiKey:     'pit-ccedc24a-6e84-49d7-b0ad-54c11d8333be',
     apiBase:    'https://services.leadconnectorhq.com',
@@ -285,8 +285,8 @@
         lastName: lastName || '-',
         email,
         phone,
-        source: 'Luminous skin tech SA - Korean Facial',
-        tags: ['Korean Facial'],
+        source: 'Luminous skin tech SA - Jawlines Culpting',
+        tags: ['Jawlines Culpting'],
       });
       const contactId = contactRes.contact?.id || contactRes.id;
 
@@ -299,7 +299,7 @@
         assignedUserId: GHL.userId,
         startTime:      isoInTz(start, BUSINESS_TZ),
         endTime:        isoInTz(end,   BUSINESS_TZ),
-        title:          `${name} — Korean Facial`,
+        title:          `${name} — Jawlines Culpting`,
         selectedTimezone: BUSINESS_TZ,
       });
 
