@@ -2,7 +2,7 @@
   "use strict";
 
   // ------- Configuration -------
-  const SERVICE_NAME = "Medical Face and Neck Treatment";
+  const SERVICE_NAME = "Medical Face and Neck Double Lifting Treatment";
   const SERVICE_DURATION_MIN = 60;
 
   // GHL credentials
@@ -285,8 +285,8 @@
         lastName: lastName || '-',
         email,
         phone,
-source: 'Luminous skin tech SA - Medical Face and Neck Treatment',
-        tags: ['Medical Face and Neck Treatment'],
+source: 'Luminous skin tech SA - Medical Face and Neck Double Lifting Treatment',
+        tags: ['Medical Face and Neck Double Lifting Treatment'],
       });
       const contactId = contactRes.contact?.id || contactRes.id;
 
@@ -299,7 +299,7 @@ source: 'Luminous skin tech SA - Medical Face and Neck Treatment',
         assignedUserId: GHL.userId,
         startTime:      isoInTz(start, BUSINESS_TZ),
         endTime:        isoInTz(end,   BUSINESS_TZ),
-        title:          `${name} — Medical Face and Neck Treatment`,
+        title:          `${name} — Medical Face and Neck Double Lifting Treatment`,
         selectedTimezone: BUSINESS_TZ,
       });
 
