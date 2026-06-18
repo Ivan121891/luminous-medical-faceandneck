@@ -10,7 +10,7 @@
   const GHL = {
     locationId: 'Q42RHUR6LefBwNRdGXFR',
     calendarId: 'ENn1JMvZieVXk71KFqdg',
-    userId:     'xAMtGZMrz3cYyCCLxJiL',
+    userId:     'J4EPfnvM02OTBdZbYPWR',
     apiKey:     'pit-ccedc24a-6e84-49d7-b0ad-54c11d8333be',
     apiBase:    'https://services.leadconnectorhq.com',
     version:    '2021-07-28',
@@ -105,7 +105,7 @@
       a.getDate() === b.getDate();
   }
   function formatLongDate(d) {
-    return d.toLocaleDateString(undefined, {
+    return d.toLocaleDateString('en-US', {
       weekday: "long", month: "long", day: "numeric", year: "numeric",
     });
   }
@@ -296,6 +296,29 @@
     const [firstName, ...rest] = name.split(/\s+/);
     const lastName = rest.join(" ");
 
+    // Persist the lead + chosen slot BEFORE any GHL call so it is never lost
+    // if the booking fails. Non-blocking: never let this stop the booking flow.
+    let leadId = null;
+    try {
+      const leadRes = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          page: window.location.hostname,
+          treatment: SERVICE_NAME,
+          calendarId: GHL.calendarId,
+          startTime: isoInTz(start, BUSINESS_TZ),
+          endTime:   isoInTz(end,   BUSINESS_TZ),
+          name, email, phone,
+          fbclid: (new URLSearchParams(window.location.search)).get('fbclid') || undefined,
+          fbp: (document.cookie.match(/_fbp=([^;]+)/) || [])[1],
+          fbc: (document.cookie.match(/_fbc=([^;]+)/) || [])[1],
+        }),
+      });
+      const leadJson = await leadRes.json().catch(function(){ return {}; });
+      leadId = leadJson.leadId || null;
+    } catch (_) { /* never block booking on lead persistence */ }
+
     try {
       // 1) Upsert contact in GHL
       const contactRes = await ghlFetch('/contacts/upsert', {
@@ -311,20 +334,34 @@ source: 'Luminous skin tech SA - Medical Face and Neck Double Lifting Treatment'
 
       // 2) Book appointment
       // selectedTimezone tells GHL which timezone the slot was picked in.
-      await ghlFetch('/calendars/events/appointments', {
+      const aptRes = await ghlFetch('/calendars/events/appointments', {
         calendarId: GHL.calendarId,
         locationId: GHL.locationId,
         contactId,
         assignedUserId: GHL.userId,
+        ignoreFreeSlotValidation: true,
         startTime:      isoInTz(start, BUSINESS_TZ),
         endTime:        isoInTz(end,   BUSINESS_TZ),
         title:          `${name} — Medical Face and Neck Double Lifting Treatment`,
         selectedTimezone: BUSINESS_TZ,
       });
+      const appointmentId = (aptRes && (aptRes.id || aptRes.appointmentId || (aptRes.appointment && aptRes.appointment.id))) || null;
+
+      // Appointment returned 2xx — persist success and ONLY NOW fire the
+      // Schedule conversion (prevents phantom conversions on failed bookings).
+      try {
+        fetch('/api/lead/result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leadId: leadId, status: 'success', appointmentId: appointmentId }),
+        }).catch(function(){});
+      } catch (_) {}
 
       track("Lead", { content_name: SERVICE_NAME });
       track("Schedule", { content_name: SERVICE_NAME });
+      track("CompleteRegistration", { content_name: SERVICE_NAME });
       trackDedicated("Schedule", { content_name: SERVICE_NAME }, eventId);
+      trackDedicated("CompleteRegistration", { content_name: SERVICE_NAME }, eventId);
       try {
         fetch('/api/capi', {
           method: 'POST',
@@ -347,6 +384,14 @@ source: 'Luminous skin tech SA - Medical Face and Neck Double Lifting Treatment'
       showStep("confirmed");
     } catch (err) {
       console.error("GHL booking error", err);
+      // Booking failed — persist the failure and do NOT fire the Schedule conversion.
+      try {
+        fetch('/api/lead/result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ leadId: leadId, status: 'fail', error: (err && err.message) ? err.message : String(err) }),
+        }).catch(function(){});
+      } catch (_) {}
       const detail = (err && err.message) ? err.message : "Booking failed. Please try again or call us.";
       errorText.textContent = detail;
       errorText.classList.remove("hidden");
